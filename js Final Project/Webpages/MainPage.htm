@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Budget Manager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
+    <link rel="stylesheet" href="MainPage.css" />
+  </head>
+  <body>
+    <main>
+      <div class="header">
+        <div class="img-container">
+          <img src="./Images/BudgetManagerLogo2.jpg" alt="Logo" />
+        </div>
+        <div class="inner-toggle-profile">
+          <div>
+            <label class="switch">
+              <input type="checkbox" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="profile-contents">
+            <div class="profile-img">
+              <img src="images/profile.jpg" alt="user image" />
+            </div>
+            <span id="profile-name"></span>
+
+            <span id="logout-icon"><i class="fa-solid fa-arrow-right-from-bracket"></i></span>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar1">
+        <div class="goals-section">
+          <h2>Your Savings Goals</h2>
+          <button class="add-goal-btn" onclick="openGoalModal()">
+            Add New Goal
+          </button>
+
+           <!-- Add Goal pop up -->
+        <div class="modal" id="add-goal-modal">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeGoalModal()">&times;</span>
+                <h2>Add New Goal</h2>
+                <div class="form-group">
+                    <label for="goal-name">Goal Name:</label>
+                    <input type="text" id="goal-name" placeholder="Enter goal name">
+                </div>
+                <div class="form-group">
+                    <label for="goal-amount">Goal Amount:</label>
+                    <input type="number" id="goal-amount" placeholder="Enter total amount">
+                </div>
+                <div class="form-group">
+                    <label for="current-contribution">Current Contribution:</label>
+                    <input type="number" id="current-contribution" placeholder="Enter current contribution">
+                </div>
+                <button class="submit-btn" onclick="addNewGoal()">Add Goal</button>
+                <button class="cancel-btn" onclick="closeGoalModal()">Cancel</button>
+            </div>
+        </div>
+
+          <div class="goals-grid">
+            <!-- goal card -->
+            <div class="goal-card">
+              <h3>Vacation Fund</h3>
+              <div class="progress-bar">
+                <div class="progress" style="width: 40%"></div>
+              </div>
+              <div class="contribution">
+                <span>40% achieved</span>
+                <button class="contribute-btn" onclick="openModal()">+</button>
+              </div>
+            </div>
+
+            <!-- here more goal card comes -->
+          </div>
+        </div>
+
+        <!-- contribution pop up -->
+        <div class="modal" id="contribution-modal">
+          <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2>Contribute to Vacation Fund</h2>
+            <p>Available Balance: $2,500</p>
+            <div class="form-group">
+              <label for="contribution-amount">Contribution Amount:</label>
+              <input
+                type="number"
+                id="contribution-amount"
+                placeholder="Enter amount"
+              />
+            </div>
+            <button class="submit-btn">Add to Goal</button>
+            <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+          </div>
+        </div>
+      </div>
+      <div class="main-content">
+        <div class="income-expenses">
+          <div class="total-income">
+            <h2>Total Income</h2>
+            <p>$5,000</p>
+          </div>
+          <div class="total-expenses">
+            <h2>Total Expenses</h2>
+            <p>$2,500</p>
+          </div>
+        </div>
+        <div class="remaining-balance">
+          <h2>Remaining Balance</h2>
+          <p>$2,500</p>
+        </div>
+
+        <div class="savings-progress">
+          <h2>Savings Progress</h2>
+          <div class="progress-bar">
+            <div class="progress" style="width: 60%"></div>
+          </div>
+          <p>60% towards goal</p>
+        </div>
+
+        <form class="signup-form">
+          <h2>Add Expense</h2>
+
+          <div class="form-elements">
+            <label for="transaction-type">Transaction Type</label>
+            <select id="transaction-type">
+              <option value="Income">Income</option>
+              <option value="Expense">Expense</option>
+            </select>
+          </div>
+
+          <div class="form-elements">
+            <label for="category">Category</label>
+            <select id="category">
+              <option value="food">Food</option>
+              <option value="education">Education</option>
+              <option value="medicine">Medicine</option>
+              <option value="others">others</option>
+            </select>
+          </div>
+
+          <div class="form-elements">
+            <label for="expense-amount">Amount</label>
+            <input type="text" id="expense-amount" />
+          </div>
+
+          <div class="form-elements">
+            <label for="date">Date</label>
+            <input type="date" id="date" />
+          </div>
+
+          <button type="submit" class="expense-add-submit-button">
+            Add Expense
+          </button>
+        </form>
+
+        <div class="transaction-list">
+          <h2>Transaction List</h2>
+          <div class="transaction-list-on-small-screen">
+            <table id="transaction-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- transactions comes here -->
+                </tbody>
+              </table>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="Main.js"></script>
+  </body>
+</html>
