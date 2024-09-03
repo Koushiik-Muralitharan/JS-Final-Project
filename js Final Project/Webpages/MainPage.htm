@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Budget Manager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
+    <link rel="stylesheet" href="MainPage.css" />
+  </head>
+  <body>
+    <main>
+      <div class="header">
+        <!-- <div class="img-container">
+          <img src="./Images/BudgetManagerLogo2.jpg" alt="Logo" />
+        </div> -->
+        <div>
+          <span id="logo-text">BM</span>
+        </div>
+        <div class="inner-toggle-profile">
+          <div class="toggle">
+            <label class="switch">
+              <input type="checkbox" id="theme-toggle"  />
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="profile-contents">
+            <div class="profile-img">
+              <img src="images/profile.jpg" alt="user image" />
+            </div>
+            <span id="profile-name"></span>
+
+            <span id="logout-icon"><i class="fa-solid fa-arrow-right-from-bracket"></i></span>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar1">
+        <div class="goals-section">
+          <h2 class="box">Your Savings Goals</h2>
+          <button class="add-goal-btn" onclick="openGoalModal()">
+            Add New Goal
+          </button>
+
+           <!-- Add Goal pop up -->
+        <div class="modal" id="add-goal-modal">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeGoalModal()">&times;</span>
+                <h2>Add New Goal</h2>
+               <form action="">
+
+                <div class="form-group">
+                  <label for="goal-name">Goal Name:</label>
+                  <input type="text" id="goal-name" placeholder="Enter goal name">
+                  <span id="goal-name-error"></span>
+              </div>
+              <div class="form-group">
+                  <label for="goal-amount">Goal Amount:</label>
+                  <input type="number" id="goal-amount" placeholder="Enter total amount">
+                  <span id="goal-amount-error"></span>
+              </div>
+              <div class="form-group">
+                  <label for="current-contribution">Current Contribution:</label>
+                  <input type="number" id="current-contribution" placeholder="Enter current contribution">
+                  <span id="goal-contribution-error"></span>
+              </div>
+              <button id="goal-submit-button">Add Goal</button>
+              <button class="cancel-btn" onclick="closeGoalModal()">Cancel</button>
+               </form>
+
+                <span id="add-goal-main-errors"></span>
+            </div>
+        </div>
+
+          <div class="goals-grid" id="goals-container">
+            <!-- goal card -->
+
+            <!-- here more goal card comes -->
+          </div>
+        </div>
+
+        <!-- contribution pop up -->
+        <div class="modal" id="contribution-modal">
+          <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 id="goal-heading"></h2>
+            <!-- <p>Remaining balance: $<span id="Balance-amount-status"></span></p> -->
+            <p>The Goal Amount: $<span id="goal-amount-status"></span></p>
+            <p>Already contributed: $<span id="contribution-status"></span></p>
+            <div class="form-group">
+              <label for="contribution-amount">Contribution Amount:</label>
+              <input
+                type="text"
+                id="contribution-amount"
+                placeholder="Enter amount"
+              />
+              <span id="add-contribution-error"></span>
+            </div>
+            <button id="goal-contribution-submit-button">Add to Goal</button>
+            <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div class="income-expenses">
+          <div class="total-income">
+            <h2 class="box">Total Income</h2>
+            <p id="total-income-display"></p>
+          </div>
+          <div class="total-expenses">
+            <h2 class="box">Total Expenses</h2>
+            <p id="total-expenses-display"></p>
+          </div>
+        </div>
+        <div class="remaining-balance">
+          <h2 class="box">Remaining Balance</h2>
+          <p id="remaining-balance-display"></p>
+        </div>
+
+       <div>
+
+        <div class="savings-progress">
+          <h2 class="box">Calculate Expense</h2>
+
+          <div class="form-elements-progress">
+            <label for="transaction-type-progress">Transaction Type</label>
+            <select id="transaction-type-progress">
+              <option value="Expense">Expense</option>
+            </select>
+          </div>
+  
+          <div class="form-elements-progress">
+            <label for="category-progress">Category</label>
+            <select id="category-progress">
+              <option value="food">Food</option>
+              <option value="education">Education</option>
+              <option value="medicine">Medicine</option>
+              <option value="others">others</option>
+            </select>
+          </div>
+          <div id="progress-bar">
+            <div id="progress" style="width: 10%"></div>
+          </div>
+          <p id="progress-text"></p>
+
+          <button id="percentage-calculator">Calculate Percentage</button>
+      </div>
+
+
+        <form class="signup-form">
+          <h2 class="box">Add Expense</h2>
+
+          <div class="form-elements">
+            <label for="transaction-type">Transaction Type</label>
+            <select id="transaction-type">
+              <option value="Income">Income</option>
+              <option value="Expense">Expense</option>
+            </select>
+          </div>
+
+          <div class="form-elements">
+            <label for="category">Category</label>
+            <select id="category">
+              <option value="food">Food</option>
+              <option value="education">Education</option>
+              <option value="medicine">Medicine</option>
+              <option value="others">others</option>
+            </select>
+          </div>
+
+          <div class="form-elements">
+            <label for="expense-amount">Amount</label>
+            <input type="text" id="amount-field" />
+            <span id="amount-error"></span>
+          </div>
+
+          <div class="form-elements">
+            <label for="date">Date</label>
+            <input type="date" id="date-field" />
+            <span id="date-error"></span>
+          </div>
+
+          <button id="expense-add-submit-button">
+            Add Expense
+          </button>
+          <span id="display-main-errors"></span>
+        </form>
+
+        <div class="transaction-list">
+          <h2 class="box">Transaction List</h2>
+          <div class="transaction-list-on-small-screen">
+            <table id="transaction-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="transaction-body">
+                  <!-- transactions comes here -->
+                </tbody>
+              </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- congratulations pop up  -->
+
+      <div id="goal-completion-popup" class="popup" style="display:none;">
+        <div class="popup-content">
+          <span class="close-popup" id="close-popup">&times;</span>
+          <p>Congratulations, <span id="user-name"></span>! You have successfully completed your saving goal for <span id="completed-goal-name"></span>.</p>
+        </div>
+      </div>
+    </main>
+
+    <script src="Main.js"></script>
+  </body>
+</html>
