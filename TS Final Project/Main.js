@@ -1,13 +1,10 @@
 "use strict";
-// Get the UserArray from localStorage and parse it
 let UserAccountArray = JSON.parse(localStorage.getItem("UserArray") || "[]");
-// Get HTML elements
 let profileName = document.getElementById("profile-name");
 let logoutIcon = document.getElementById("logout-icon");
 let remainingBalance = document.getElementById("remaining-balance-display");
-// Find the logged-in user
+// Find the user with login status in
 let userAccount = UserAccountArray.find((user) => user.loggedStatus === "in");
-// If the logged-in user is found, display their name
 if (userAccount) {
     profileName.innerText = userAccount.name;
     var userNames = userAccount.name;
@@ -29,10 +26,8 @@ logoutIcon.onclick = function () {
     localStorage.setItem("UserArray", JSON.stringify(UserAccountArray));
     window.location.href = "SignIn.htm";
 };
-// Get the elements from the DOM and define their types
 const transactionType = document.getElementById("transaction-type");
 const categoryType = document.getElementById("category");
-// Define arrays of categories for income and expenses
 const incomeCategories = [
     { value: "salary", text: "Salary" },
     { value: "investment", text: "Investment" },
@@ -44,9 +39,8 @@ const expenseCategories = [
     { value: "medicine", text: "Medicine" },
     { value: "others", text: "Others" },
 ];
-// Function to update the category options based on transaction type
 function updatecategoryOptions() {
-    categoryType.innerHTML = ""; // Clear existing options
+    categoryType.innerHTML = "";
     const selectedCategories = transactionType.value === "Income" ? incomeCategories : expenseCategories;
     selectedCategories.forEach((category) => {
         const option = document.createElement("option");
@@ -55,7 +49,6 @@ function updatecategoryOptions() {
         categoryType.appendChild(option);
     });
 }
-// Attach the event handler to the transaction type dropdown
 transactionType.onchange = function () {
     updatecategoryOptions();
 };
@@ -90,12 +83,13 @@ class ExpenseRepository {
         this.expenses = this.expenses.filter((e) => e.id !== expense.id);
         this.saveExpensesToLocalStorage();
         console.log("Transaction deleted:", expense);
-        this.renderTransactions(); // Re-render the table after deletion
+        this.renderTransactions();
+        window.location.reload();
     }
     editTransaction(id, updatedExpense) {
         const index = this.expenses.findIndex((expense) => expense.id === id);
         if (index !== -1) {
-            this.expenses[index] = Object.assign(Object.assign({}, this.expenses[index]), updatedExpense);
+            this.expenses[index] = updatedExpense;
             this.saveExpensesToLocalStorage();
             this.renderTransactions();
             console.log("Transaction updated:", this.expenses[index]);
@@ -104,7 +98,6 @@ class ExpenseRepository {
             console.log("Transaction not found.");
         }
     }
-    // Method to re-render the table after deletion
     renderTransactions() {
         const tableBody = document.getElementById("transaction-body");
         tableBody.innerHTML = "";
@@ -117,18 +110,16 @@ class ExpenseRepository {
     calculateTotals() {
         let incomeSum = 0;
         let expenseSum = 0;
-        // Assuming UserTransactionsArray and userEmail are already defined and of proper types
         this.expenses.forEach((transaction) => {
             if (transaction.email === userEmails) {
                 if (transaction.transactionType === "Income") {
-                    incomeSum += transaction.amount; // No need for parseFloat since amount is a number
+                    incomeSum += transaction.amount;
                 }
                 else if (transaction.transactionType === "Expense") {
                     expenseSum += transaction.amount;
                 }
             }
         });
-        // Assuming totalIncome, totalExpense, and remainingBalance are properly typed HTML elements
         const totalIncome = document.getElementById("total-income-display");
         const totalExpense = document.getElementById("total-expenses-display");
         const remainingBalance = document.getElementById("remaining-balance-display");
@@ -137,37 +128,42 @@ class ExpenseRepository {
         totalExpense.innerText = `$${expenseSum.toFixed(2)}`;
         const remaining = incomeSum - expenseSum;
         remainingBalance.innerText = `$${remaining.toFixed(2)}`;
-        // Store the remaining balance in localStorage
-        localStorage.setItem("UserBalance", JSON.stringify(remaining));
+        // localStorage.setItem("UserBalance", JSON.stringify(remaining));
     }
     expenseCategories() {
-        //var categoryProgress = document.getElementById('category-progress');
         let incomeSums = 0;
         let expenseSums = 0;
         let categoryValue = categoryProgress.value;
-        // Check if the user has any transactions
-        let res = this.expenses.some((transaction) => transaction.email === userEmails);
-        console.log(res);
+        let res = this.expenses.some((transaction) => transaction.email === userEmails && transaction.transactionType === 'Expense');
+        // console.log(res);
         if (!res) {
             alert("Add transactions to view the statistics.");
         }
         else {
-            // Iterate through the transactions
             this.expenses.forEach((transaction) => {
                 if (transaction.email === userEmails) {
                     if (transaction.transactionType === "Income") {
-                        // Sum all income (handle both string and number)
-                        incomeSums += typeof transaction.amount === 'string' ? parseFloat(transaction.amount) : transaction.amount;
+                        incomeSums +=
+                            typeof transaction.amount === "string"
+                                ? parseFloat(transaction.amount)
+                                : transaction.amount;
                     }
                     else if (transaction.transactionType === "Expense") {
-                        // Sum the expenses for the selected category
-                        if (transaction.category === categoryValue) {
-                            expenseSums += typeof transaction.amount === 'string' ? parseFloat(transaction.amount) : transaction.amount;
+                        if (categoryValue === 'savings') {
+                            expenseSums = this.savings;
+                            console.log(this.savings);
+                        }
+                        else {
+                            if (transaction.category === categoryValue) {
+                                expenseSums +=
+                                    typeof transaction.amount === "string"
+                                        ? parseFloat(transaction.amount)
+                                        : transaction.amount;
+                            }
                         }
                     }
                 }
             });
-            // Calculate the percentage of expenses
             let percentage = (expenseSums / incomeSums) * 100;
             if (isNaN(percentage) || percentage < 0) {
                 percentage = 0;
@@ -175,9 +171,8 @@ class ExpenseRepository {
             else if (percentage > 100) {
                 percentage = 100;
             }
-            // Update the progress bar and progress text
-            let progressBar = document.getElementById('progress');
-            let progressText = document.getElementById('progress-text');
+            let progressBar = document.getElementById("progress");
+            let progressText = document.getElementById("progress-text");
             if (progressBar && progressText) {
                 progressBar.style.width = `${percentage}%`;
                 progressText.innerText = `${percentage.toFixed(2)}% of amount for ${categoryValue}`;
@@ -185,21 +180,18 @@ class ExpenseRepository {
         }
     }
 }
-// Initialize repository
 const expenseRepo = new ExpenseRepository();
-// Get the input elements
 const transactionTypeElement = document.getElementById("transaction-type");
 const categoryElement = document.getElementById("category");
 const amountFieldElement = document.getElementById("amount-field");
 const dateFieldElement = document.getElementById("date-field");
 const addButtonElement = document.getElementById("expense-add-submit-button");
-// Get the error display elements
 const amountErrorElement = document.getElementById("amount-error");
 const dateErrorElement = document.getElementById("date-error");
-const mainErrorElement = document.getElementById("display-main-errors");
+const displayMainErrors = document.getElementById("display-main-errors");
+// Validation Part
 let isValidate = false;
 let editingExpenseId = null;
-// Amount Validation
 amountFieldElement.onblur = function () {
     const amount = parseFloat(amountFieldElement.value);
     if (isNaN(amount) || amount <= 0) {
@@ -211,7 +203,6 @@ amountFieldElement.onblur = function () {
         isValidate = true;
     }
 };
-// Function to validate the date
 function validateDate() {
     const selectedDate = new Date(dateFieldElement.value);
     const today = new Date();
@@ -220,7 +211,6 @@ function validateDate() {
     const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
     return selectedDate >= firstDayOfMonth && selectedDate <= today;
 }
-// Add Expense Form Validation for the Date field
 dateFieldElement.onblur = function () {
     if (dateFieldElement.value === "") {
         dateErrorElement.innerText = "Please choose a date.*";
@@ -235,7 +225,7 @@ dateFieldElement.onblur = function () {
         isValidate = true;
     }
 };
-// Function to create and append rows in the table
+// Function to create transaction rows in the table
 function createRow(Usertransactions) {
     const tableBody = document.getElementById("transaction-body");
     let row = document.createElement("tr");
@@ -260,13 +250,12 @@ function createRow(Usertransactions) {
     let editCell = document.createElement("td");
     let editButton = document.createElement("button");
     editButton.onclick = function () {
-        // Populate form with expense data for editing
         transactionTypeElement.value = Usertransactions.transactionType;
         updatecategoryOptions();
         categoryElement.value = Usertransactions.category;
         amountFieldElement.value = Usertransactions.amount.toString();
         dateFieldElement.value = Usertransactions.date;
-        editingExpenseId = Usertransactions.id; // Set the ID of the expense being edited
+        editingExpenseId = Usertransactions.id;
     };
     editButton.innerText = "Edit";
     editButton.classList.add("transaction-edit-button");
@@ -281,28 +270,24 @@ function clearFormFields() {
     dateFieldElement.value = "";
 }
 //Find Percentage;
-var calculatePercentage = document.getElementById('percentage-calculator');
-var categoryProgress = document.getElementById('category-progress');
+var calculatePercentage = document.getElementById("percentage-calculator");
+var categoryProgress = document.getElementById("category-progress");
 calculatePercentage.onclick = function (e) {
     e.preventDefault();
     expenseRepo.expenseCategories();
 };
 addButtonElement.onclick = function (event) {
-    // Prevent the default form submission behavior
     event.preventDefault();
     if (isValidate) {
-        // Re-validate all fields upon submission
         let isFormValid = true;
-        // Amount validation
         const amount = parseFloat(amountFieldElement.value);
         if (isNaN(amount) || amount <= 0) {
-            amountErrorElement.innerText = 'Please enter a valid amount.';
+            amountErrorElement.innerText = "Please enter a valid amount.";
             isFormValid = false;
         }
         else {
-            amountErrorElement.innerText = '';
+            amountErrorElement.innerText = "";
         }
-        // Date validation
         if (dateFieldElement.value === "") {
             dateErrorElement.innerText = "Please choose a date.*";
             isFormValid = false;
@@ -314,9 +299,7 @@ addButtonElement.onclick = function (event) {
         else {
             dateErrorElement.innerText = "";
         }
-        // Check if the entire form is valid before proceeding
         if (isFormValid) {
-            // Gather form data
             const newExpense = {
                 id: editingExpenseId !== null
                     ? editingExpenseId
@@ -330,19 +313,17 @@ addButtonElement.onclick = function (event) {
             if (transactionTypeElement.value === "Expense") {
                 let currentRemainingBalance = parseFloat(remainingBalance.innerText.replace("$", ""));
                 if (amount > currentRemainingBalance) {
-                    //   displayMainErrors.innerText =
-                    //     "This expense exceeds your remaining balance.";
+                    displayMainErrors.innerText =
+                        "This expense exceeds your remaining balance.";
                     console.log("This expense exceeds your remaining balance.");
                     return;
                 }
             }
             if (editingExpenseId !== null) {
-                // Edit the existing expense
                 expenseRepo.editTransaction(editingExpenseId, newExpense);
-                editingExpenseId = null; // Reset editing ID
+                editingExpenseId = null;
             }
             else {
-                // Add a new transaction
                 expenseRepo.addTransaction(newExpense);
                 clearFormFields();
             }
@@ -350,15 +331,17 @@ addButtonElement.onclick = function (event) {
             console.log("Form is valid. Transaction added.");
         }
         else {
-            console.log('Form validation failed.');
+            console.log("Form validation failed.");
         }
     }
     else {
+        displayMainErrors.innerText =
+            "please fill all the fields.*";
         console.log("Form validation failed.");
     }
 };
-// Savings and goal part 
-// Modals part 
+// Savings and goal part starting
+// Modals part
 function closeModal() {
     let contributionModal = document.getElementById("contribution-modal");
     contributionModal.style.display = "none";
@@ -368,14 +351,19 @@ function openGoalModal() {
     openAddGoalModal.style.display = "flex";
 }
 let editGoalID = null;
-function editGoalModal(goalID) {
-    let editGoalModal = document.getElementById('edit-goal-modal');
+function editGoalModal(goalID, goalName, goalAmount) {
+    let editGoalModal = document.getElementById("edit-goal-modal");
+    let editGoalNameField = document.getElementById('edit-goal-name');
+    let editGoalAmountField = document.getElementById('edit-goal-amount');
+    console.log(goalName);
+    editGoalNameField.value = goalName;
+    editGoalAmountField.value = goalAmount.toString();
     editGoalModal.style.display = "flex";
     editGoalID = goalID;
     //console.log(editGoalID);
 }
 function closeEditGoalModal() {
-    let editGoalMoal = document.getElementById('edit-goal-modal');
+    let editGoalMoal = document.getElementById("edit-goal-modal");
     editGoalMoal.style.display = "none";
 }
 function closeGoalModal() {
@@ -386,9 +374,12 @@ let currentGoalID = null;
 function openModal(goalName, currentContribution, goalAmount, goalID) {
     const openContributionModel = document.getElementById("contribution-modal");
     openContributionModel.style.display = "flex";
-    // contributionStatus.innerText = currentContribution;
-    // goalAmountStatus.innerText = goalAmount
-    // goalHeading.innerText= goalName;
+    let contributionStatus = document.getElementById("contribution-status");
+    let goalAmountStatus = document.getElementById("goal-amount-status");
+    let goalHeading = document.getElementById("goal-heading");
+    contributionStatus.innerText = `${currentContribution}`;
+    goalAmountStatus.innerText = `${goalAmount}`;
+    goalHeading.innerText = goalName;
     currentGoalID = goalID;
 }
 class GoalRepository {
@@ -459,6 +450,9 @@ function createGoalCard(goal) {
     goalCard.classList.add("goal-card");
     goalCard.id = `goal-container-${goal.goalId}`;
     console.log(goalCard.id);
+    if (goal.goalStatus === "yes") {
+        goalCard.style.backgroundColor = "#32CD32";
+    }
     goalCard.innerHTML = `
       <h3>${goal.goalName}</h3>
       <div class="progress-bar">
@@ -470,7 +464,8 @@ function createGoalCard(goal) {
       <div class="arrange-buttons"> 
             <button class="contribute-btn" onclick="openModal('${goal.goalName}', ${goal.goalContribution}, ${goal.goalAmount}, ${goal.goalId})">+</button>
         <button class="delete-goal-btn" onclick="goalRepo.deleteGoals(${goal.goalId})">-</button>
-        <button class="edit-goal-btn" onclick="editGoalModal(${goal.goalId})"><i class="fa-regular fa-pen-to-square"></i></button>
+        <button class="edit-goal-btn" onclick="editGoalModal(${goal.goalId}, '${goal.goalName}', ${goal.goalAmount}
+          )"><i class="fa-regular fa-pen-to-square"></i></button>
       </div>     
       </div>
     `;
@@ -484,7 +479,7 @@ let goalContributionInput = document.getElementById("current-contribution");
 let goalNameError = document.getElementById("goal-name-error");
 let goalAmountError = document.getElementById("goal-amount-error");
 let goalContributionError = document.getElementById("goal-contribution-error");
-let goalErrors = document.getElementById('add-goal-main-errors');
+let goalErrors = document.getElementById("add-goal-main-errors");
 let goalFormButton = document.getElementById("goal-submit-button");
 let canProceed = false;
 goalNameInput.onblur = function () {
@@ -502,7 +497,8 @@ goalAmountInput.onblur = function () {
         goalAmountError.innerText = "please enter a amount.*";
         canProceed = false;
     }
-    else if (isNaN(parseFloat(goalAmountInput.value)) || parseFloat(goalAmountInput.value) <= 0) {
+    else if (isNaN(parseFloat(goalAmountInput.value)) ||
+        parseFloat(goalAmountInput.value) <= 0) {
         goalAmountError.innerText = "please enter a valid amount.*";
         canProceed = false;
     }
@@ -537,15 +533,15 @@ goalFormButton.onclick = function (e) {
     if (canProceed) {
         goalErrors.innerText = "";
         if (userGoalAmount > userGoalContribution) {
-            goalErrors.innerText = '';
+            goalErrors.innerText = "";
         }
         else {
-            goalErrors.innerText = 'Enter a valid contribution.';
+            goalErrors.innerText = "Enter a valid contribution.";
             return;
         }
         if (!(userGoalContribution < remainingStatus)) {
             console.log(remainingStatus);
-            goalErrors.innerText = 'Limited Balance.';
+            goalErrors.innerText = "Limited Balance.";
             return;
         }
         const userGoal = {
@@ -553,20 +549,21 @@ goalFormButton.onclick = function (e) {
             goalEmail: userEmails,
             goalName: userGoalName,
             goalAmount: userGoalAmount,
-            goalContribution: userGoalContribution
+            goalContribution: userGoalContribution,
+            goalStatus: "not",
         };
         goalRepo.addGoals(userGoal);
     }
     else {
-        goalErrors.innerText = 'Check the fields before you submit.';
+        goalErrors.innerText = "Check the fields before you submit.";
     }
 };
-var editGoalNamefield = document.getElementById('edit-goal-name');
-var editGoalAmountfield = document.getElementById('edit-goal-amount');
-var editNameError = document.getElementById('edit-goal-name-error');
-var editAmountError = document.getElementById('edit-goal-amount-error');
-var editMainErrors = document.getElementById('edit-goal-main-errors');
-var editGoalButton = document.getElementById('goal-edit-button');
+var editGoalNamefield = document.getElementById("edit-goal-name");
+var editGoalAmountfield = document.getElementById("edit-goal-amount");
+var editNameError = document.getElementById("edit-goal-name-error");
+var editAmountError = document.getElementById("edit-goal-amount-error");
+var editMainErrors = document.getElementById("edit-goal-main-errors");
+var editGoalButton = document.getElementById("goal-edit-button");
 let proceed = false;
 editGoalNamefield.onblur = function () {
     if (editGoalNamefield.value === "") {
@@ -608,9 +605,9 @@ editGoalButton.onclick = function (event) {
         return;
     }
 };
-var addContribution = document.getElementById('goal-contribution-submit-button');
-var contributionAmountInput = document.getElementById('contribution-amount');
-var addContributionError = document.getElementById('add-contribution-error');
+var addContribution = document.getElementById("goal-contribution-submit-button");
+var contributionAmountInput = document.getElementById("contribution-amount");
+var addContributionError = document.getElementById("add-contribution-error");
 let mayProceed = false;
 contributionAmountInput.onblur = function () {
     let currentRemainingBalance = parseFloat(remainingBalance.innerText.replace("$", ""));
@@ -641,14 +638,56 @@ addContribution.onclick = function (event) {
     console.log(goalID);
     if (mayProceed) {
         goalRepo.goals.forEach((goal) => {
-            if (goal.goalId === currentGoalID && goal.goalEmail === userEmails) {
+            if (goal.goalId === currentGoalID &&
+                goal.goalEmail === userEmails &&
+                goal.goalStatus !== "yes") {
                 goal.goalContribution += smallContribute;
             }
+            if (!(goal.goalContribution <= goal.goalAmount)) {
+                addContributionError.innerText = "this contribution will exceed the goal.";
+                return;
+            }
+            if (goal.goalContribution >= goal.goalAmount &&
+                goal.goalStatus !== "yes") {
+                goal.goalStatus = "yes";
+                //alert('your goal is completed successfully.');
+                closeModal();
+                var goalCompletionPopup = document.getElementById("goal-completion-popup");
+                var completedGoalName = document.getElementById("completed-goal-name");
+                var closePopup = document.getElementById("close-popup");
+                var userNameElement = document.getElementById("user-name");
+                userNameElement.innerText = userNames;
+                completedGoalName.innerText = goal.goalName;
+                goalCompletionPopup.style.display = "block";
+                closePopup.onclick = function () {
+                    goalCompletionPopup.style.display = "none";
+                };
+            }
         });
-        goalRepo.saveGoalsToLocalStorage();
-        window.location.reload();
-        goalRepo.renderGoals();
-        window.location.reload();
-        goalRepo.calculateSavings();
+        setTimeout(() => {
+            goalRepo.saveGoalsToLocalStorage();
+            goalRepo.renderGoals();
+            window.location.reload();
+            goalRepo.calculateSavings();
+        }, 5000);
+    }
+};
+const themeToggle = document.getElementById("theme-toggle");
+if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark-mode");
+    themeToggle.checked = true;
+}
+else {
+    document.body.classList.remove("dark-mode");
+    themeToggle.checked = false;
+}
+themeToggle.onchange = function () {
+    if (themeToggle.checked) {
+        document.body.classList.add("dark-mode");
+        localStorage.setItem("theme", "dark");
+    }
+    else {
+        document.body.classList.remove("dark-mode");
+        localStorage.setItem("theme", "light");
     }
 };

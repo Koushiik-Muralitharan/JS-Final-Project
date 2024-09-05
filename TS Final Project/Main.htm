@@ -42,12 +42,12 @@
       <div class="sidebar1">
         <div class="goals-section">
           <h2 class="box">Your Savings Goals</h2>
+         <div class="sub-savings-contents">
           <button class="add-goal-btn" onclick="openGoalModal()">
             Add New Goal
           </button> 
-          <span id="total-savings">
-
-          </span>
+          <span id="total-savings"></span>
+         </div>
 
            <!-- Add Goal pop up -->
         <div class="modal" id="add-goal-modal">
@@ -153,20 +153,13 @@
 
         <div class="savings-progress">
           <h2 class="box">Calculate Expense</h2>
-
-          <div class="form-elements-progress">
-            <label for="transaction-type-progress">Transaction Type</label>
-            <select id="transaction-type-progress">
-              <option value="Expense">Expense</option>
-            </select>
-          </div>
-  
           <div class="form-elements-progress">
             <label for="category-progress">Category</label>
             <select id="category-progress">
               <option value="food">Food</option>
               <option value="education">Education</option>
               <option value="medicine">Medicine</option>
+              <option value="savings">Savings</option>
               <option value="others">others</option>
             </select>
           </div>
@@ -179,7 +172,7 @@
       </div>
 
 
-        <form class="signup-form">
+        <form class="add-expense-form">
           <h2 class="box">Add Expense</h2>
 
           <div class="form-elements">

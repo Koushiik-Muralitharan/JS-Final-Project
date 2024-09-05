@@ -19,7 +19,7 @@
   
   body.dark-mode {
     background-color: black;
-    color: white;
+    /* color: white; */
   }
   
   #goal-name-error,
@@ -308,12 +308,27 @@
     justify-content: space-between;
     align-items: center;
   }
+  #total-savings{
+    display: inline-block;
+    background-color:#1abc9c;
+    padding: 7px;
+    font-size: small;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+  }
+  .sub-savings-contents{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 4% ;
+  }
   
   .contribute-btn, .delete-goal-btn, .edit-goal-btn{
     background-color: #76c7c0;
     color: white;
     border: none;
-    padding:  10px 15px;
+    padding:  5px 12px;
     border-radius: 50%;
     cursor: pointer;
     font-size: 1.2em;
@@ -372,7 +387,7 @@
   
   .savings-progress {
     text-align: center;
-    margin: 4%;
+    margin: 2%;
     
   }
   
@@ -396,7 +411,7 @@
   
   /* Transaction adding form */
   
-  .signup-form {
+  .add-expense-form {
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
@@ -411,7 +426,7 @@
     margin-bottom: 25px;
   }
   .form-elements-progress{
-    margin: 2%;
+    margin: 2% 0px;
   }
   label {
     display: block;
